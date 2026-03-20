@@ -1,0 +1,29 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    builder (3.3.0)
+    canvas_cc (0.0.43)
+      builder
+      happymapper
+      nokogiri
+      rdiscount
+      rubyzip (~> 1.2.1)
+      thor
+    happymapper (0.5.0)
+      libxml-ruby (~> 2.9)
+    libxml-ruby (2.9.0)
+    nokogiri (1.13.10-arm64-darwin)
+      racc (~> 1.4)
+    racc (1.8.1)
+    rdiscount (2.2.7.3)
+    rubyzip (1.2.4)
+    thor (1.5.0)
+
+PLATFORMS
+  arm64-darwin-25
+
+DEPENDENCIES
+  canvas_cc
+
+BUNDLED WITH
+   2.4.22

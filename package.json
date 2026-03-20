@@ -1,0 +1,25 @@
+{
+  "name": "imscc-mcp",
+  "version": "0.1.0",
+  "description": "MCP server wrapping Instructure canvas_cc to build Canvas Common Cartridge (.imscc) files",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": { "imscc-mcp": "dist/index.js" },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts"
+  },
+  "keywords": ["mcp", "common-cartridge", "imscc", "canvas", "canvas_cc", "lti"],
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.27.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  },
+  "engines": { "node": ">=18" }
+}
