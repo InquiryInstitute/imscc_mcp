@@ -12,6 +12,10 @@
   },
   "keywords": ["mcp", "common-cartridge", "imscc", "canvas", "canvas_cc", "lti"],
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/InquiryInstitute/imscc_mcp.git"
+  },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.27.0",
     "zod": "^3.23.0"

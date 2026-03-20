@@ -1,5 +1,7 @@
 # imscc-mcp
 
+Repo: **https://github.com/InquiryInstitute/imscc_mcp**
+
 [MCP](https://modelcontextprotocol.io/) server that builds **Canvas Common Cartridge** (`.imscc`) packages using Instructure’s Ruby gem **[canvas_cc](https://github.com/instructure/canvas_cc)**. Cartridges are **Canvas-profile** CC files; many LMSes (including [Populi](https://support.populiweb.com/hc/en-us/articles/223798167)) can import valid Common Cartridge 1.x zip/imscc.
 
 ## Prerequisites
