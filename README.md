@@ -19,6 +19,16 @@ npm install
 npm run build
 ```
 
+## Tests
+
+```bash
+bundle install
+npm install
+npm test
+```
+
+Runs integration checks on `ruby/build_cartridge.rb`: successful builds produce a ZIP with `imsmanifest.xml`; invalid specs are rejected.
+
 ## Run
 
 ```bash
