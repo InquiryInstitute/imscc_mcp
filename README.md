@@ -4,6 +4,10 @@ Repo: **https://github.com/InquiryInstitute/imscc_mcp**
 
 [MCP](https://modelcontextprotocol.io/) server that builds **Canvas Common Cartridge** (`.imscc`) packages using Instructure’s Ruby gem **[canvas_cc](https://github.com/instructure/canvas_cc)**. Cartridges are **Canvas-profile** CC files; many LMSes (including [Populi](https://support.populiweb.com/hc/en-us/articles/223798167)) can import valid Common Cartridge 1.x zip/imscc.
 
+### Populi: “webcontent … skipped”
+
+**Wiki/lesson pages** from **canvas_cc** are **`type="webcontent"`** in `imsmanifest.xml`. **Populi often skips them** (you may see two errors for two pages). **Assignments** typically use **`associatedcontent/imscc_xmlv1p1/learning-application-resource`** and import more reliably. When authoring from [**imscc_template**](https://github.com/InquiryInstitute/imscc_template), run **`assemble-spec.mjs --populi`** to omit wiki pages and wiki module items; see **[`docs/POPULI.md`](https://github.com/InquiryInstitute/imscc_template/blob/main/docs/POPULI.md)** there.
+
 ## Prerequisites
 
 - **Node.js** ≥ 18  
