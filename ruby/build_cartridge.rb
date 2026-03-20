@@ -37,6 +37,47 @@ def build_from_spec(spec)
   course.start_at = cspec["start_at"] if cspec["start_at"]
   course.conclude_at = cspec["conclude_at"] if cspec["conclude_at"]
 
+  rubrics_by_id = {}
+
+  (spec["rubrics"] || []).each do |r|
+    rub = M::Rubric.new
+    rub.identifier = r["identifier"]
+    rub.external_identifier = (r["external_identifier"] || r["identifier"]).to_s
+    rub.title = r["title"] if r["title"]
+    rub.description = r["description"] if r["description"]
+    rub.points_possible = r["points_possible"] if r.key?("points_possible")
+    rub.read_only = r["read_only"] unless r["read_only"].nil?
+    rub.reusable = r["reusable"] unless r["reusable"].nil?
+    rub.public = r["public"] unless r["public"].nil?
+    unless r["free_form_criterion_comments"].nil?
+      rub.free_form_criterion_comments = r["free_form_criterion_comments"]
+    end
+
+    (r["criteria"] || []).each do |c|
+      crit = M::RubricCriterion.new
+      crit.id = c["id"]
+      crit.description = c["description"] if c["description"]
+      crit.long_description = c["long_description"] if c["long_description"]
+      crit.points = c["points"] if c.key?("points")
+      crit.mastery_points = c["mastery_points"] if c.key?("mastery_points")
+      crit.ignore_for_sorting = c["ignore_for_sorting"] unless c["ignore_for_sorting"].nil?
+
+      (c["ratings"] || []).each do |rt|
+        rating = M::Rating.new
+        rating.id = rt["id"]
+        rating.description = rt["description"] if rt["description"]
+        rating.points = rt["points"] if rt.key?("points")
+        rating.criterion_id = (rt["criterion_id"] || crit.id).to_s
+        rating.long_description = rt["long_description"] if rt["long_description"]
+        crit.ratings << rating
+      end
+      rub.criteria << crit
+    end
+
+    rubrics_by_id[rub.identifier] = rub
+    course.rubrics << rub
+  end
+
   (spec["assignment_groups"] || []).each do |g|
     ag = M::AssignmentGroup.new
     ag.identifier = g["identifier"]
@@ -69,6 +110,18 @@ def build_from_spec(spec)
     as.lock_at = a["lock_at"] if a["lock_at"]
     if a["assignment_group_identifier_ref"]
       as.assignment_group_identifier_ref = a["assignment_group_identifier_ref"]
+    end
+    if a["rubric_identifier"]
+      rid = a["rubric_identifier"]
+      fail!("unknown rubric_identifier: #{rid}") unless rubrics_by_id[rid]
+
+      as.rubric = rubrics_by_id[rid]
+    end
+    unless a["rubric_use_for_grading"].nil?
+      as.rubric_use_for_grading = a["rubric_use_for_grading"]
+    end
+    unless a["rubric_hide_score_total"].nil?
+      as.rubric_hide_score_total = a["rubric_hide_score_total"]
     end
     (a["submission_types"] || []).each { |st| as.submission_types << st }
     course.assignments << as

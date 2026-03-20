@@ -43,8 +43,19 @@ const buildCartridgeSchema = z.object({
     })
     .describe("Course metadata passed to canvas_cc"),
   pages: z.array(z.record(z.unknown())).optional().describe("Wiki pages: identifier, page_name, body, workflow_state?"),
+  rubrics: z
+    .array(z.record(z.unknown()))
+    .optional()
+    .describe(
+      "Canvas rubrics: identifier, external_identifier?, title, criteria[].id, criteria[].ratings[]; link from assignments via rubric_identifier"
+    ),
   assignment_groups: z.array(z.record(z.unknown())).optional(),
-  assignments: z.array(z.record(z.unknown())).optional().describe("Uses assignment_group_identifier_ref to link groups"),
+  assignments: z
+    .array(z.record(z.unknown()))
+    .optional()
+    .describe(
+      "assignment_group_identifier_ref, optional rubric_identifier + rubric_use_for_grading; submission_types per canvas_cc"
+    ),
   discussions: z.array(z.record(z.unknown())).optional(),
   canvas_modules: z.array(z.record(z.unknown())).optional().describe("Modules; module_items use content_type WikiPage|ExternalUrl|…"),
   files: z.array(z.record(z.unknown())).optional().describe("identifier, file_path, file_location (local path to copy)"),
@@ -69,6 +80,7 @@ server.registerTool(
       course: args.course,
     };
     if (args.pages?.length) spec.pages = args.pages;
+    if (args.rubrics?.length) spec.rubrics = args.rubrics;
     if (args.assignment_groups?.length) spec.assignment_groups = args.assignment_groups;
     if (args.assignments?.length) spec.assignments = args.assignments;
     if (args.discussions?.length) spec.discussions = args.discussions;
@@ -107,6 +119,25 @@ server.registerTool(
           workflow_state: "unpublished",
         },
       ],
+      rubrics: [
+        {
+          identifier: "irubric_demo",
+          external_identifier: "ext_rubric_demo",
+          title: "Demo rubric",
+          points_possible: 10,
+          criteria: [
+            {
+              id: "crit_quality",
+              description: "Quality",
+              points: 10,
+              ratings: [
+                { id: "r_high", description: "Excellent", points: 10, criterion_id: "crit_quality" },
+                { id: "r_low", description: "Needs work", points: 0, criterion_id: "crit_quality" },
+              ],
+            },
+          ],
+        },
+      ],
       assignment_groups: [{ identifier: "iag_hw", title: "Homework", position: 1 }],
       assignments: [
         {
@@ -118,6 +149,8 @@ server.registerTool(
           grading_type: "points",
           submission_types: ["online_text_entry"],
           assignment_group_identifier_ref: "iag_hw",
+          rubric_identifier: "irubric_demo",
+          rubric_use_for_grading: true,
         },
       ],
       canvas_modules: [

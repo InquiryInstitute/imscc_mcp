@@ -43,6 +43,60 @@ describe("build_cartridge.rb", () => {
     }
   });
 
+  test("assignment with rubric includes rubrics.xml in package", () => {
+    const out = tempOutputDir();
+    try {
+      const spec = {
+        output_directory: out,
+        course: { identifier: "itest_rub", title: "Rubric Course", course_code: "RUB101" },
+        rubrics: [
+          {
+            identifier: "irubric_1",
+            external_identifier: "ext_rubric_1",
+            title: "Short essay",
+            points_possible: 6,
+            criteria: [
+              {
+                id: "crit_thesis",
+                description: "Thesis",
+                points: 3,
+                ratings: [
+                  { id: "rat_a", description: "Strong", points: 3, criterion_id: "crit_thesis" },
+                  { id: "rat_b", description: "Weak", points: 0, criterion_id: "crit_thesis" },
+                ],
+              },
+            ],
+          },
+        ],
+        assignment_groups: [{ identifier: "iag1", title: "Writing", position: 1 }],
+        assignments: [
+          {
+            identifier: "ias_essay",
+            title: "Essay",
+            body: "<p>Write.</p>",
+            points_possible: 6,
+            workflow_state: "unpublished",
+            grading_type: "points",
+            submission_types: ["online_text_entry"],
+            assignment_group_identifier_ref: "iag1",
+            rubric_identifier: "irubric_1",
+            rubric_use_for_grading: true,
+          },
+        ],
+      };
+      const { status, stdout, stderr } = runBuildCartridge(spec);
+      assert.equal(status, 0, `stderr: ${stderr}\nstdout: ${stdout}`);
+      const result = JSON.parse(stdout);
+      assert.ok(existsSync(result.imscc_path));
+      assertZipMagic(result.imscc_path);
+      assertManifestInZip(result.imscc_path);
+      const listing = spawnSync("unzip", ["-l", result.imscc_path], { encoding: "utf-8" });
+      assert.match(listing.stdout, /rubrics\.xml/i, "expected rubrics.xml in cartridge");
+    } finally {
+      cleanupDir(out);
+    }
+  });
+
   test("full example (modules + assignments) produces valid cartridge", () => {
     const out = tempOutputDir();
     try {

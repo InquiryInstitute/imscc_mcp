@@ -52,11 +52,15 @@ Point `command` at `node` and `args` at the absolute path to `dist/index.js` aft
 
 - **`output_directory`**: absolute path; created if missing.  
 - **`course.title`**: required.  
-- **Module items** use `canvas_cc` content types, e.g. `WikiPage` + `identifierref` matching a page `identifier`, or `ExternalUrl` + `url`.  
-- **Assignments** link to groups with `assignment_group_identifier_ref`.  
-- **Files**: each entry needs `file_location` pointing at a path readable when Ruby runs (same machine as the MCP server).
+- **Assignments** — Supported: groups, points, `submission_types` (e.g. `online_text_entry`, `online_upload`), due dates, HTML body. Link a **rubric** with `rubric_identifier` (must match a `rubrics[].identifier`), plus optional `rubric_use_for_grading` / `rubric_hide_score_total`.  
+- **Rubrics** — `rubrics[]` with `identifier`, `external_identifier` (defaults to `identifier`), `title`, optional `points_possible`, and `criteria[]` each with `id`, `description`, `points`, and `ratings[]` (`id`, `description`, `points`, `criterion_id` matching the criterion `id`).  
+- **Slides / decks** — There is no separate “slides” type. Package **files** (e.g. `.pptx`, `.pdf`) under `files[]` with `identifier`, `file_path` (path inside the course files tree), and `file_location` (absolute path on the machine that runs the build). Optionally add a module item with `content_type` **`Attachment`** and `identifierref` set to the file’s `identifier` (see [canvas_cc](https://github.com/instructure/canvas_cc) module item types).  
+- **Module items** — e.g. `WikiPage` + `identifierref` matching a page `identifier`, or `ExternalUrl` + `url`.  
+- **Assignments → groups** — `assignment_group_identifier_ref` must match an assignment group `identifier`.
 
-For every attribute supported by the gem (quizzes, question banks, rubrics, etc.), extend `ruby/build_cartridge.rb` following the [canvas_cc README](https://github.com/instructure/canvas_cc).
+Importer support (Canvas vs Populi vs others) varies; **test imports** on your LMS.
+
+For types not yet mapped in `ruby/build_cartridge.rb` (quizzes, question banks, full LTI, etc.), extend the script using the [canvas_cc README](https://github.com/instructure/canvas_cc).
 
 ## License
 
